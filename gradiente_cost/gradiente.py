@@ -19,8 +19,7 @@ it = []
 y = []
 
 def grad_(it, y_v):
-    global casas_decimais, teta_jota, alpha
-
+    
     iterator = 0
     new_teta_jota = teta_jota
     old_teta_jota = teta_jota -1        #diferente pra entra no while

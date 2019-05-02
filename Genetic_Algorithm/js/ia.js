@@ -3,17 +3,17 @@ const randomize = require('./randomize')
 
 
 /* Constants */
-const TAX_OF_CROSSOVER = 0.6
-const TAX_OF_MUTATION = 0.02
-const NUMBER_OF_INDIVIDUALS = 8
+const crossoverrate = 0.6
+const matationrate = 0.02
+const NUMBER_OF_INDIVIDUALS = 4
 const FLOOR_CEIL_CP = 2
-const MAX_STACK = 3000
+const maxgen = 3000
 let generation = 0
 
 
 const object = {
-    lines: 4, 
-    collumn: 4,
+    lines: 3, 
+    collumn: 3,
     numberOfIndividuals: NUMBER_OF_INDIVIDUALS
 }
 
@@ -22,7 +22,7 @@ const DIMENSION = object.lines * object.collumn
 const OBJECTIVE = generate.objective(DIMENSION)
 
 
-function recursiveAlgorith (matrizP, MAX_STACK) {
+function recursiveAlgorith (matrizP, maxgen) {
     
     /* calcula a distancia de Hamming -> bits incorretos em relação ao valor objetivo do vetor */
     let hammingDistance = generate.getHammingDistance(matrizP, OBJECTIVE)
@@ -30,7 +30,7 @@ function recursiveAlgorith (matrizP, MAX_STACK) {
     /* calcula a diferença em relação ao valor ideal do vetor */
     let allFitness = generate.getFitness(hammingDistance, object)
     
-    MAX_STACK > 1 ? isFinal = false : isFinal = true
+    maxgen > 1 ? isFinal = false : isFinal = true
 
     console.log(matrizP);    
     console.log('\nGENERATION: ' + ++generation);    
@@ -53,16 +53,16 @@ function recursiveAlgorith (matrizP, MAX_STACK) {
         matrizP = setNewPopulation(selectedElementsToCrossover, matrizP)
 
         /* crossover escolhendo alguns dos elementos para crossover */
-        matrizP = crossover(selectedElementsToCrossover, matrizP)
+        matrizP = crossover(matrizP)
 
         /* adiciona uma mutação flutuante de 0,02% de chance de acontecimento */
         matrizP = mutation(matrizP)
         
-        -- MAX_STACK
+        -- maxgen
 
         console.log('\n')
 
-        recursiveAlgorith(matrizP, MAX_STACK)
+        recursiveAlgorith(matrizP, maxgen)
     }
 
     else
@@ -110,21 +110,21 @@ function selectCrossover (randomVec, porcentVec) {
 }
 
 
-function crossover (indexMatrizP, matrizP) {
-    let sets = generateSets(indexMatrizP)
+function crossover (matrizP) {
+   // let sets = generateSets(indexMatrizP)
     
     console.log('escolha de individuos para crossover: ');
-    console.log(sets)
+    //console.log(sets)
 
-    sets.forEach(element => {
+    for (let i = 0; i < matrizP.length; i += 2){
 
         /* valor de 0.0 a 1.0 */
         let coeficiente = (randomize.randomize(10)  / 10)
 
-        if (coeficiente < TAX_OF_CROSSOVER){
+        if (coeficiente > crossoverrate){
 
-            let one = matrizP[element[0]]
-            let two = matrizP[element[1]]
+            let one = matrizP[i]
+            let two = matrizP[i + 1]
 
             /* Aqui eu coloco um local minimo pra quebra do gene: Se DIMENSION = 12 e FLOOR_CEIL_CP = 2
             a quebra so pode acontecer da segunda posição até a décima */
@@ -142,13 +142,13 @@ function crossover (indexMatrizP, matrizP) {
                 console.log('enter2');
             } */
 
-            matrizP[element[0]] = cross(one, two, cp)        
-            matrizP[element[1]] = cross(two, one, cp)            
+            matrizP[i] = cross(one, two, cp)        
+            matrizP[i + 1] = cross(two, one, cp)            
             
         }
 
         
-    })
+    }
 
     return matrizP
 }
@@ -204,7 +204,7 @@ function mutation (matriz) {
 
         for (let j = 0; j < DIMENSION; j ++){
             
-            if ((randomize.randomize(100) / 100) <= TAX_OF_MUTATION){
+            if ((randomize.randomize(100) / 100) <= matationrate){
                 console.log('MUTATION: [ ' + i + ' ][ ' + j + ' ]');
                 matriz[i][j] == 0 ? matriz[i][j] = 1 : matriz[i][j] = 0
             }
@@ -236,7 +236,7 @@ let isFinal = false;
 
 matriz = matrizP.getMatrizP()
 
-recursiveAlgorith(matriz, MAX_STACK)
+recursiveAlgorith(matriz, maxgen)
 
 
 /* ----------------------------------------------------------------- */
