@@ -9,8 +9,8 @@ class generate_dataset:
     def __init__(self, show_plot=False):
 
         self.range_max_elements = 100            # quantidade maxima de elementos que entram no dataset
-        self.random_gap_min_max = [0, 200]       # no eixo y quanto pode ser a subida ou queda dos elementos 
-        self.limiar_x_accept = 0.6               # aceita apenas alguns x que forem maior que o limiar - random 
+        self.random_gap_min_max = [0, 5]       # no eixo y quanto pode ser a subida ou queda dos elementos 
+        self.limiar_x_to_be_accept = 0.6               # aceita apenas alguns x que forem maior que o limiar - random 
         self.show_plot = show_plot
 
         self.dataset = []
@@ -41,14 +41,16 @@ class generate_dataset:
     def create(self):
         for x in range (self.range_max_elements):
             
-            f_x = (3/2)*x + 4*x            # formula da f(x)
-            f_x += rand.randint(self.random_gap_min_max[0], self.random_gap_min_max[1])
-            linha = [f_x, x]
+            f_x = 0.54233*x + 6            # formula da f(x)
+            f_x += rand.uniform(self.random_gap_min_max[0], self.random_gap_min_max[1])
+            linha = [round(f_x / 10, 2), x / 10]
             
-            if self.raffle_a_porcentual_value() > self.limiar_x_accept:
+            if self.raffle_a_porcentual_value() > self.limiar_x_to_be_accept:
                 self.dataset.append(linha)
                 self.add_y_set_plot(f_x)
                 self.add_x_set_plot(x)
+
+        # rand.shuffle(self.dataset)              # não faz muita diferença, mas para ficar aleatorio
 
         for element in self.dataset:
             print (element)
